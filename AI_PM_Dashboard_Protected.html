@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI产品经理专家成长路径 Dashboard - Protected</title>
+    <style>
+        /* Login Screen Styles */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1F3A5F 0%, #8B5CF6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1F3A5F;
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            font-size: 14px;
+            color: #5B6C7D;
+            margin-bottom: 30px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #D0D4D9;
+            border-radius: 6px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: #8B5CF6;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #8B5CF6, #14B8A6);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .login-error {
+            color: #C4314B;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .login-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-content {
+            display: none;
+        }
+
+        /* Original Dashboard Styles */
+        :root {
+            --deep-navy: #1F3A5F;
+            --steel-blue: #4472C4;
+            --slate-gray: #5B6C7D;
+            --charcoal: #3D3D3D;
+            --cool-gray: #D0D4D9;
+            --light-gray: #F2F4F6;
+            --success-green: #2D7F3E;
+            --alert-red: #C4314B;
+            --warning-amber: #D97706;
+            --ai-purple: #8B5CF6;
+            --ai-teal: #14B8A6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--charcoal);
+            line-height: 1.6;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--deep-navy) 0%, var(--ai-purple) 100%);
+            color: white;
+            padding: 30px 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .dashboard-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .benchmark-section {
+            background-color: rgba(255,255,255,0.15);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .benchmark-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #FCD34D;
+        }
+
+        .benchmark-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .benchmark-item {
+            background-color: rgba(255,255,255,0.1);
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid var(--ai-teal);
+        }
+
+        .benchmark-label {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+
+        .benchmark-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .main-container {
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 30px 40px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--deep-navy);
+            margin-bottom: 20px;
+            border-left: 4px solid var(--ai-purple);
+            padding-left: 15px;
+        }
+
+        .roadmap-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .roadmap-stage {
+            background: white;
+            border: 2px solid var(--cool-gray);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .roadmap-stage:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            border-color: var(--ai-purple);
+        }
+
+        .stage-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stage-number {
+            background: linear-gradient(135deg, var(--ai-purple), var(--ai-teal));
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            margin-right: 12px;
+        }
+
+        .stage-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--deep-navy);
+        }
+
+        .stage-duration {
+            font-size: 11px;
+            color: var(--slate-gray);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .stage-list {
+            list-style: none;
+        }
+
+        .stage-list li {
+            font-size: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--light-gray);
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .stage-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--ai-purple);
+            font-weight: 700;
+        }
+
+        .stage-list li:last-child {
+            border-bottom: none;
+        }
+
+        .stage-list li a {
+            color: var(--ai-purple);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .stage-list li a:hover {
+            color: var(--ai-teal);
+            text-decoration: underline;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .skill-card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-top: 4px solid var(--ai-purple);
+        }
+
+        .skill-card.technical {
+            border-top-color: var(--steel-blue);
+        }
+
+        .skill-card.strategic {
+            border-top-color: var(--ai-teal);
+        }
+
+        .skill-card.soft {
+            border-top-color: var(--warning-amber);
+        }
+
+        .skill-category {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--slate-gray);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .skill-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--deep-navy);
+            margin-bottom: 12px;
+        }
+
+        .skill-items {
+            list-style: none;
+        }
+
+        .skill-items li {
+            font-size: 12px;
+            padding: 6px 0;
+            color: var(--charcoal);
+        }
+
+        .skill-items li:before {
+            content: "✓";
+            color: var(--success-green);
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        .frameworks-section {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .framework-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .framework-item {
+            border-left: 3px solid var(--ai-purple);
+            padding-left: 20px;
+        }
+
+        .framework-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--deep-navy);
+            margin-bottom: 8px;
+        }
+
+        .framework-desc {
+            font-size: 12px;
+            color: var(--charcoal);
+            line-height: 1.6;
+        }
+
+        .action-plan-section {
+            background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+            border-radius: 8px;
+            padding: 30px;
+            border: 2px solid var(--ai-purple);
+        }
+
+        .action-plan-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--deep-navy);
+            margin-bottom: 20px;
+        }
+
+        .action-timeline {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .timeline-block {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        .timeline-period {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--ai-purple);
+            margin-bottom: 12px;
+        }
+
+        .timeline-tasks {
+            list-style: none;
+        }
+
+        .timeline-tasks li {
+            font-size: 12px;
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--cool-gray);
+        }
+
+        .timeline-tasks li:last-child {
+            border-bottom: none;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: 700;
+            margin-left: 6px;
+        }
+
+        .priority-high {
+            background-color: var(--alert-red);
+            color: white;
+        }
+
+        .priority-medium {
+            background-color: var(--warning-amber);
+            color: white;
+        }
+
+        .priority-low {
+            background-color: var(--success-green);
+            color: white;
+        }
+
+        .resources-section {
+            margin-top: 40px;
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .resource-card {
+            background: var(--light-gray);
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            transition: transform 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+
+        .resource-card:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .resource-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .resource-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--deep-navy);
+        }
+
+        @media (max-width: 1366px) {
+            .roadmap-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .framework-grid,
+            .action-timeline {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Overlay -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-box">
+            <div class="login-icon">🔐</div>
+            <div class="login-title">访问受限</div>
+            <div class="login-subtitle">请输入密码访问AI PM学习Dashboard</div>
+            <input type="password" class="login-input" id="passwordInput" placeholder="请输入密码">
+            <button class="login-button" onclick="checkPassword()">解锁访问</button>
+            <div class="login-error" id="errorMessage">密码错误,请重试</div>
+        </div>
+    </div>
+
+    <!-- Dashboard Content (Initially Hidden) -->
+    <div class="dashboard-content" id="dashboardContent">
+        <div class="dashboard-header">
+            <button class="logout-btn" onclick="logout()">🔒 退出登录</button>
+            <div class="dashboard-title">AI产品经理专家成长路径</div>
+            <div class="dashboard-subtitle">从互联网产品经理到世界级AI PM | 目标: Anthropic产品经理水准</div>
+
+            <div class="benchmark-section">
+                <div class="benchmark-title">🎯 目标标杆: Anthropic 产品经理</div>
+                <div class="benchmark-grid">
+                    <div class="benchmark-item">
+                        <div class="benchmark-label">薪资水平</div>
+                        <div class="benchmark-value">$468K - $651K/年</div>
+                    </div>
+                    <div class="benchmark-item">
+                        <div class="benchmark-label">核心能力</div>
+                        <div class="benchmark-value">拥有产品与模型双重vision</div>
+                    </div>
+                    <div class="benchmark-item">
+                        <div class="benchmark-label">经验要求</div>
+                        <div class="benchmark-value">创始人经验 或 8+年PM</div>
+                    </div>
+                    <div class="benchmark-item">
+                        <div class="benchmark-label">学习周期</div>
+                        <div class="benchmark-value">30天基础 → 3个月精通</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-container">
+            <!-- 学习路径 -->
+            <div class="section-title">📊 30天专家级成长路径</div>
+            <div class="roadmap-container">
+                <div class="roadmap-stage">
+                    <div class="stage-header">
+                        <div class="stage-number">1</div>
+                        <div class="stage-title">AI基础理解</div>
+                    </div>
+                    <div class="stage-duration">第1-7天 | Foundation</div>
+                    <ul class="stage-list">
+                        <li>ML核心概念 → <a href="https://www.coursera.org/courses?query=free&skills=Machine+Learning" target="_blank">Coursera免费ML课程</a></li>
+                        <li>LLM工作原理与架构 → <a href="https://developers.google.com/machine-learning/crash-course" target="_blank">Google ML速成课程</a></li>
+                        <li>神经网络、NLP基础 → <a href="https://www.mygreatlearning.com/academy/learn-for-free/courses/introduction-to-machine-learning1" target="_blank">Great Learning免费课程</a></li>
+                        <li>Transformer架构理解 → <a href="https://www.coursera.org/browse/data-science/machine-learning" target="_blank">Coursera ML专项</a></li>
+                        <li>Prompt Engineering入门 → <a href="https://www.promptingguide.ai/" target="_blank">Prompt Engineering Guide</a></li>
+                        <li>Claude/GPT等模型对比 → <a href="https://docs.anthropic.com/en/docs/intro-to-claude" target="_blank">Claude官方文档</a></li>
+                    </ul>
+                </div>
+
+                <div class="roadmap-stage">
+                    <div class="stage-header">
+                        <div class="stage-number">2</div>
+                        <div class="stage-title">AI产品方法论</div>
+                    </div>
+                    <div class="stage-duration">第8-14天 | Methodology</div>
+                    <ul class="stage-list">
+                        <li>U.S.I.D.O. Framework → <a href="https://voltagecontrol.com/articles/ai-product-management-roadmap-frameworks-step-by-step-guide/" target="_blank">AI PM框架指南</a></li>
+                        <li>Build/Buy/Bake决策框架 → <a href="https://www.lakera.ai/blog/prompt-engineering-guide" target="_blank">Lakera AI指南</a></li>
+                        <li>AI产品评估矩阵 → <a href="https://gocious.com/blog/ai-in-product-management-guide-for-2026-for-product-leaders" target="_blank">Gocious 2026指南</a></li>
+                        <li>AI Evals体系建设 → <a href="https://www.ibm.com/think/prompt-engineering" target="_blank">IBM Prompt Engineering</a></li>
+                        <li>Safety-by-Design原则 → <a href="https://docs.anthropic.com/en/home" target="_blank">Anthropic安全文档</a></li>
+                        <li>Model Cards实践 → <a href="https://cloud.google.com/discover/what-is-prompt-engineering" target="_blank">Google Cloud指南</a></li>
+                    </ul>
+                </div>
+
+                <div class="roadmap-stage">
+                    <div class="stage-header">
+                        <div class="stage-number">3</div>
+                        <div class="stage-title">实战能力建设</div>
+                    </div>
+                    <div class="stage-duration">第15-23天 | Practice</div>
+                    <ul class="stage-list">
+                        <li>构建个人Prompt库 → <a href="https://github.com/dair-ai/Prompt-Engineering-Guide" target="_blank">GitHub Prompt库</a></li>
+                        <li>AI原型快速搭建 → <a href="https://docs.anthropic.com/en/docs/get-started" target="_blank">Claude API入门</a></li>
+                        <li>Red-teaming实践 → <a href="https://machinelearningplus.com/gen-ai/prompt-engineering-basics/" target="_blank">Prompt Engineering实践</a></li>
+                        <li>人机协作设计 → <a href="https://productschool.com/certifications/ai-for-product-managers" target="_blank">Product School认证</a></li>
+                        <li>幻觉/偏见问题处理 → <a href="https://sureprompts.com/blog/prompt-engineering-basics-2026" target="_blank">SurePrompts指南</a></li>
+                        <li>A/B测试AI功能 → <a href="https://www.the-ai-corner.com/p/your-2026-guide-to-prompt-engineering" target="_blank">AI Corner 2026指南</a></li>
+                    </ul>
+                </div>
+
+                <div class="roadmap-stage">
+                    <div class="stage-header">
+                        <div class="stage-number">4</div>
+                        <div class="stage-title">战略思维升级</div>
+                    </div>
+                    <div class="stage-duration">第24-30天 | Strategic</div>
+                    <ul class="stage-list">
+                        <li>Learning Speed作为护城河 → <a href="https://maven.com/marily-nika/ai-pm-bootcamp" target="_blank">AI PM Bootcamp</a></li>
+                        <li>AI加速器小组建设 → <a href="https://maven.com/product-faculty/ai-product-management-certification" target="_blank">Product Faculty认证</a></li>
+                        <li>Portfolio-First思维 → <a href="https://cpoclub.com/career/best-ai-product-management-courses/" target="_blank">CPO Club课程</a></li>
+                        <li>管理模型漂移风险 → <a href="https://elvtr.com/course/product-management-for-ai-and-ml" target="_blank">ELVTR AI PM课程</a></li>
+                        <li>可解释性与透明度 → <a href="https://www.coursera.org/professional-certificates/ibm-ai-product-manager" target="_blank">IBM AI PM认证</a></li>
+                        <li>构建AI产品愿景 → <a href="https://www.anthropic.com/learn/build-with-claude" target="_blank">Anthropic Academy</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 核心技能矩阵 -->
+            <div class="section-title">🎯 Anthropic级PM核心能力矩阵</div>
+            <div class="skills-grid">
+                <div class="skill-card technical">
+                    <div class="skill-category">Technical Skills</div>
+                    <div class="skill-name">技术理解能力</div>
+                    <ul class="skill-items">
+                        <li>ML/DL基础知识</li>
+                        <li>数据分析与解读</li>
+                        <li>SQL基础查询</li>
+                        <li>API集成理解</li>
+                        <li>Prompt Engineering精通</li>
+                        <li>模型评估指标理解</li>
+                    </ul>
+                </div>
+
+                <div class="skill-card strategic">
+                    <div class="skill-category">Strategic Skills</div>
+                    <div class="skill-name">战略产品能力</div>
+                    <ul class="skill-items">
+                        <li>产品愿景构建</li>
+                        <li>Roadmap优先级管理</li>
+                        <li>Build/Buy/Bake决策</li>
+                        <li>跨职能协作</li>
+                        <li>快速迭代实验</li>
+                        <li>不确定性管理</li>
+                    </ul>
+                </div>
+
+                <div class="skill-card soft">
+                    <div class="skill-category">Soft Skills</div>
+                    <div class="skill-name">软实力与沟通</div>
+                    <ul class="skill-items">
+                        <li>与DS/工程师对话能力</li>
+                        <li>AI风险沟通</li>
+                        <li>用户研究方法</li>
+                        <li>讲故事能力</li>
+                        <li>Stakeholder管理</li>
+                        <li>快速学习能力</li>
+                    </ul>
+                </div>
+
+                <div class="skill-card technical">
+                    <div class="skill-category">AI-Specific</div>
+                    <div class="skill-name">AI专项技能</div>
+                    <ul class="skill-items">
+                        <li>幻觉问题识别与处理</li>
+                        <li>偏见检测与缓解</li>
+                        <li>模型漂移监控</li>
+                        <li>AI安全性评估</li>
+                        <li>隐私保护设计</li>
+                        <li>可解释性要求</li>
+                    </ul>
+                </div>
+
+                <div class="skill-card strategic">
+                    <div class="skill-category">Innovation</div>
+                    <div class="skill-name">创新与原型</div>
+                    <ul class="skill-items">
+                        <li>快速AI原型搭建</li>
+                        <li>LLM/API组合使用</li>
+                        <li>0-1产品孵化</li>
+                        <li>创意验证方法</li>
+                        <li>失败模式预判</li>
+                        <li>迭代优化策略</li>
+                    </ul>
+                </div>
+
+                <div class="skill-card soft">
+                    <div class="skill-category">Leadership</div>
+                    <div class="skill-name">领导力与影响力</div>
+                    <ul class="skill-items">
+                        <li>组建AI加速器团队</li>
+                        <li>推动组织学习速度</li>
+                        <li>数据驱动决策文化</li>
+                        <li>变革管理</li>
+                        <li>愿景传播</li>
+                        <li>培养AI产品思维</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 方法论框架 -->
+            <div class="frameworks-section">
+                <div class="section-title">🔧 顶级AI PM必备方法论</div>
+                <div class="framework-grid">
+                    <div class="framework-item">
+                        <div class="framework-name">U.S.I.D.O. Framework</div>
+                        <div class="framework-desc">
+                            <strong>U</strong>nderstand用户问题 → <strong>S</strong>trategize解决方案 → <strong>I</strong>terate快速迭代 → <strong>D</strong>eploy部署监控 → <strong>O</strong>ptimize持续优化。核心是先解决真实问题,再考虑AI如何加速。
+                        </div>
+                    </div>
+
+                    <div class="framework-item">
+                        <div class="framework-name">Build/Buy/Bake 决策矩阵</div>
+                        <div class="framework-desc">
+                            <strong>Build</strong> 自建(核心差异化) vs <strong>Buy</strong> 购买API(通用能力) vs <strong>Bake</strong> Fine-tune(垂直场景)。根据竞争优势、时间成本、数据优势做出选择。
+                        </div>
+                    </div>
+
+                    <div class="framework-item">
+                        <div class="framework-name">AI Evals 评估体系</div>
+                        <div class="framework-desc">
+                            建立持续评估机制: 准确性、安全性、公平性、可靠性四维度。不依赖单次测试,而是建立自动化评估流程,在每次模型更新时运行。
+                        </div>
+                    </div>
+
+                    <div class="framework-item">
+                        <div class="framework-name">Safety-by-Design 原则</div>
+                        <div class="framework-desc">
+                            从设计阶段嵌入安全: Model Cards记录能力/限制 → Red-teaming对抗测试 → Human-in-the-loop关键节点 → 透明沟通AI边界。预防胜于事后补救。
+                        </div>
+                    </div>
+
+                    <div class="framework-item">
+                        <div class="framework-name">Learning Speed Moat</div>
+                        <div class="framework-desc">
+                            AI时代护城河是学习速度: 快速发现变化 → 更新认知 → 交付新方案。建立反馈闭环,用数据驱动快速决策,不追求完美,追求快速正确。
+                        </div>
+                    </div>
+
+                    <div class="framework-item">
+                        <div class="framework-name">Portfolio-First 思维</div>
+                        <div class="framework-desc">
+                            用投资组合思维管理AI产品线: 探索型(高风险高回报) + 迭代型(中等风险) + 核心优化(低风险稳定)。平衡创新与稳定,不把所有资源压在单一方向。
+                        </div>
+                    </div>
+
+                    <div class="framework-item">
+                        <div class="framework-name">Prompt Library 体系</div>
+                        <div class="framework-desc">
+                            顶级PM都有个人Prompt库: 分类存储高效prompts(用户研究/竞品分析/需求梳理/数据解读),持续迭代优化,将AI变成思维助手而非简单工具。
+                        </div>
+                    </div>
+
+                    <div class="framework-item">
+                        <div class="framework-name">AI加速器小组模式</div>
+                        <div class="framework-desc">
+                            不建立独立AI团队,而是组建跨职能加速器小组: PM+DS+工程师+设计师,以项目制方式快速验证AI场景,成功后融入主产品线。避免AI孤岛化。
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 行动计划 -->
+            <div class="action-plan-section">
+                <div class="action-plan-title">🚀 30天具体行动计划</div>
+                <div class="action-timeline">
+                    <div class="timeline-block">
+                        <div class="timeline-period">Week 1: 基础夯实</div>
+                        <ul class="timeline-tasks">
+                            <li><a href="https://www.tryexponent.com/questions?company=anthropic&role=pm" target="_blank">完成Anthropic面试题库研究</a> <span class="priority-badge priority-high">高优先级</span></li>
+                            <li><a href="https://www.oreilly.com/library/view/ai-product-management/0642572251048/" target="_blank">阅读《AI Product Management》</a></li>
+                            <li><a href="https://www.promptingguide.ai/" target="_blank">每天30分钟Prompt Engineering练习</a></li>
+                            <li><a href="https://productschool.com/certifications/ai-for-product-managers" target="_blank">订阅Product School AI PM课程</a></li>
+                            <li><a href="https://github.com/deanpeters/Product-Manager-Skills" target="_blank">建立个人学习笔记体系</a></li>
+                            <li><a href="https://www.anthropic.com/research" target="_blank">跟踪Anthropic产品发布</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-block">
+                        <div class="timeline-period">Week 2-3: 方法论深化</div>
+                        <ul class="timeline-tasks">
+                            <li><a href="https://docs.anthropic.com/en/docs/get-started" target="_blank">实践3个AI产品原型</a> <span class="priority-badge priority-high">高优先级</span></li>
+                            <li><a href="https://www.anthropic.com/research" target="_blank">学习Constitutional AI</a></li>
+                            <li><a href="https://www.ibm.com/think/prompt-engineering" target="_blank">建立AI Evals评估流程</a></li>
+                            <li><a href="https://cpoclub.com/career/best-ai-product-management-courses/" target="_blank">研究10个顶级AI产品案例</a></li>
+                            <li><a href="https://www.reddit.com/r/ProductManagement/" target="_blank">参加AI PM社区讨论</a></li>
+                            <li><a href="https://medium.com/tag/ai-product-management" target="_blank">撰写2篇AI产品分析文章</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-block">
+                        <div class="timeline-period">Week 4: 战略整合</div>
+                        <ul class="timeline-tasks">
+                            <li><a href="https://voltagecontrol.com/articles/ai-product-management-roadmap-frameworks-step-by-step-guide/" target="_blank">完成1个完整AI产品PRD</a> <span class="priority-badge priority-high">高优先级</span></li>
+                            <li><a href="https://github.com/dair-ai/Prompt-Engineering-Guide" target="_blank">构建个人Prompt Library</a></li>
+                            <li><a href="https://interview.norahq.com/interview-guides/anthropic-product-manager-interview-guide-2026" target="_blank">模拟Anthropic PM面试</a></li>
+                            <li><a href="https://maven.com/product-faculty/ai-product-management-certification" target="_blank">建立AI产品思维框架</a></li>
+                            <li><a href="https://maven.com/marily-nika/ai-pm-bootcamp" target="_blank">准备AI PM作品集</a></li>
+                            <li><a href="https://elvtr.com/course/product-management-for-ai-and-ml" target="_blank">设定3个月进阶目标</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 学习资源 -->
+            <div class="resources-section">
+                <div class="section-title">📚 精选学习资源</div>
+                <div class="resource-grid">
+                    <a href="https://www.oreilly.com/library/view/ai-product-management/0642572251048/" target="_blank" class="resource-card">
+                        <div class="resource-icon">📖</div>
+                        <div class="resource-name">AI Product Management (O'Reilly)</div>
+                    </a>
+                    <a href="https://www.tryexponent.com/questions?company=anthropic&role=pm" target="_blank" class="resource-card">
+                        <div class="resource-icon">🎓</div>
+                        <div class="resource-name">Anthropic面试题库 (Exponent)</div>
+                    </a>
+                    <a href="https://docs.anthropic.com/claude/reference/getting-started-with-the-api" target="_blank" class="resource-card">
+                        <div class="resource-icon">💻</div>
+                        <div class="resource-name">Claude API文档实践</div>
+                    </a>
+                    <a href="https://productschool.com/certifications/ai-for-product-managers" target="_blank" class="resource-card">
+                        <div class="resource-icon">🌐</div>
+                        <div class="resource-name">Product School AI课程</div>
+                    </a>
+                    <a href="https://github.com/deanpeters/Product-Manager-Skills" target="_blank" class="resource-card">
+                        <div class="resource-icon">📊</div>
+                        <div class="resource-name">GitHub PM Skills Framework</div>
+                    </a>
+                    <a href="https://www.reddit.com/r/ProductManagement/" target="_blank" class="resource-card">
+                        <div class="resource-icon">🤝</div>
+                        <div class="resource-name">AI PM社区 (Reddit)</div>
+                    </a>
+                    <a href="https://www.anthropic.com/research" target="_blank" class="resource-card">
+                        <div class="resource-icon">🔬</div>
+                        <div class="resource-name">Anthropic Research Papers</div>
+                    </a>
+                    <a href="https://medium.com/tag/ai-product-management" target="_blank" class="resource-card">
+                        <div class="resource-icon">✍️</div>
+                        <div class="resource-name">Medium AI PM文章</div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 关键差异化特质 -->
+            <div class="frameworks-section" style="margin-top: 40px; background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border: 2px solid var(--warning-amber);">
+                <div class="section-title" style="color: var(--warning-amber);">⭐ Anthropic顶级PM的差异化特质</div>
+                <div class="framework-grid">
+                    <div class="framework-item" style="border-left-color: var(--warning-amber);">
+                        <div class="framework-name">产品与模型双重Vision</div>
+                        <div class="framework-desc">
+                            不仅懂产品,更要理解模型能力边界。能够主导"模型+产品"联合发布,平衡技术可行性与用户价值。这是AI PM与传统PM最大区别。
+                        </div>
+                    </div>
+
+                    <div class="framework-item" style="border-left-color: var(--warning-amber);">
+                        <div class="framework-name">创始人思维模式</div>
+                        <div class="framework-desc">
+                            Anthropic青睐创始人背景,因为需要从0-1定义未知领域。具备强自驱力、高度不确定性承受力、愿意挑战常规、能独立推动跨部门项目。
+                        </div>
+                    </div>
+
+                    <div class="framework-item" style="border-left-color: var(--warning-amber);">
+                        <div class="framework-name">AI安全与对齐优先</div>
+                        <div class="framework-desc">
+                            深刻理解AI安全重要性,将Constitutional AI、RLHF等对齐技术融入产品设计。不追求"炫酷功能",而是"负责任的创新"。
+                        </div>
+                    </div>
+
+                    <div class="framework-item" style="border-left-color: var(--warning-amber);">
+                        <div class="framework-name">极致的学习与适应速度</div>
+                        <div class="framework-desc">
+                            AI领域每周都有突破,顶级PM必须保持每周学习新论文、新模型、新应用的习惯。建立快速吸收→验证→应用的闭环,将学习速度作为核心竞争力。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Password: 1_4m_7h3_0n3_4nd_0nly_r0s3
+        const correctPassword = "1_4m_7h3_0n3_4nd_0nly_r0s3";
+
+        // Check if already logged in
+        if (sessionStorage.getItem('isLoggedIn') === 'true') {
+            showDashboard();
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (input === correctPassword) {
+                sessionStorage.setItem('isLoggedIn', 'true');
+                showDashboard();
+            } else {
+                errorMessage.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('dashboardContent').style.display = 'block';
+        }
+
+        function logout() {
+            sessionStorage.removeItem('isLoggedIn');
+            document.getElementById('loginOverlay').style.display = 'flex';
+            document.getElementById('dashboardContent').style.display = 'none';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        // Dashboard interactions
+        const roadmapStages = document.querySelectorAll('.roadmap-stage');
+        roadmapStages.forEach(stage => {
+            stage.addEventListener('click', function() {
+                this.style.backgroundColor = '#EEF2FF';
+                setTimeout(() => {
+                    this.style.backgroundColor = 'white';
+                }, 300);
+            });
+        });
+
+        const skillCards = document.querySelectorAll('.skill-card');
+        skillCards.forEach(card => {
+            card.addEventListener('click', function() {
+                console.log('Skill clicked:', this.querySelector('.skill-name')?.textContent);
+            });
+        });
+
+        document.querySelectorAll('a[target="_blank"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                console.log('Opening resource:', this.href);
+            });
+        });
+    </script>
+</body>
+</html>
